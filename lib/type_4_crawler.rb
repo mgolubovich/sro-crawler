@@ -32,13 +32,14 @@ class Type4Crawler
 		values[:ensurance_before] = find_after "Дата окончания действия договора страхования"
 		values[:admission_date] = find_after "Дата выдачи свидетельства"
 		values[:law_address] = find_after "Юридический адрес"
-		values[:fact_address] = find_after "Юридический адрес"
+		values[:fact_address] = find_after "Фактический адрес"
 		values[:phone] = find_after "Телефон"
 		#values[:phone] = @driver.find_elements(xpath:'(//*[contains(text(), "Телефон")])[1]').first.text[/фон: (.*)/, 1] if @driver.find_elements(xpath:'(//*[contains(text(), "Телефон")])[1]').first
 		values[:email] = find_after "Электронная почта"
-		values[:site_url] = find_after "Веб-сайт"
+		site_url_xpath = "(//*[contains(text(), 'Веб-сайт организации')]/following::*)[1]"
+		values[:site_url] = @driver.find_elements(xpath:site_url_xpath).first.attribute('href') if @driver.find_elements(xpath:site_url_xpath).first
 		values[:fax] = find_after "Факс"
-		values[:full_title] = find_after "Полное наименование организации"
+		values[:full_title] = find_after "Полное наименование"
 		#values[:full_title] = full_title
 		values[:ogrn] = '"' + find_after("ГРН") + '"' if find_after("ГРН")
 		admission_code_raw = find_after("Номер свидетельства").split(" ").first if find_after("Номер свидетельства")

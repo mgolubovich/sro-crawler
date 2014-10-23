@@ -11,8 +11,7 @@ namespace :collecting do
 	task :collect_sfera_type_all do 
 		Dir.mkdir('csv') unless Dir.exist?('csv')
 		Dir.chdir('csv')
-		sources_list = [['СРО-С-025-10082009','http://sro.ssrb.info/reestrsro/index.php'],
-						['СРО-С-032-31082009','http://sro-npts.ru/sro/index.php'],
+		sources_list = [['СРО-С-032-31082009','http://sro-npts.ru/sro/index.php'],
 						['СРО-С-046-06102009','http://www.sro-sso.ru/reestr/index.php'],
 						['СРО-С-056-28102009','http://registry.np-ss.org/'],
 						['СРО-С-058-03112009','http://www.stroytambov.ru/reestr/'],
@@ -48,7 +47,7 @@ namespace :collecting do
 						['СРО-С-249-12072012','http://www.sro-gaso.ru/module/index.php'],
 						['СРО-С-253-05092012','http://sro-mrsa.ru/rstr/index.php']
 					]
-		sources_list[-2..-1].each do |sro_code, start_page|
+		sources_list.each do |sro_code, start_page|
 			collect_sfera_type sro_code, start_page
 		end
 	end
