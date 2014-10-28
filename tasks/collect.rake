@@ -52,6 +52,51 @@ namespace :collecting do
 		end
 	end
 
+	desc 'collect_type_5 all'
+	task :collect_type_5_all do 
+		Dir.mkdir('csv') unless Dir.exist?('csv')
+		Dir.chdir('csv')
+		sources_list = [['СРО-И-008-30112009','http://membersite.sroreestr.ru/default.aspx?s=181'],
+						['СРО-И-010-11122009','http://membersite.sroreestr.ru/default.aspx?s=90'],
+						['СРО-И-016-28122009','http://membersite.sroreestr.ru/default.aspx?s=190'],
+						['СРО-П-002-22042009','http://membersite.sroreestr.ru/default.aspx?s=2'],
+						['СРО-П-018-19082009','http://membersite.sroreestr.ru/default.aspx?s=51'],
+						['СРО-П-030-28092009','http://membersite.sroreestr.ru/default.aspx?s=4'],
+						['СРО-П-032-29092009','http://membersite.sroreestr.ru/default.aspx?s=42'],
+						['СРО-П-047-09112009','http://membersite.sroreestr.ru/default.aspx?s=65'],
+						['СРО-П-060-20112009','http://www.sro-protek.ru/IFrames/Organizations.aspx'],
+						['СРО-П-066-30112009','http://membersite.sroreestr.ru/default.aspx?s=9'],
+						['СРО-П-077-11122009','http://membersite.sroreestr.ru/default.aspx?s=90'],
+						['СРО-П-100-23122009','http://membersite.sroreestr.ru/default.aspx?s=17'],
+						['СРО-П-101-23122009','http://membersite.sroreestr.ru/default.aspx?s=58'],
+						['СРО-П-104-24122009','http://membersite.sroreestr.ru/Organizations.aspx?s=116'],
+						['СРО-П-106-25122009','http://membersite.sroreestr.ru/default.aspx?s=118'],
+						['СРО-П-124-25012010','http://membersite.sroreestr.ru/default.aspx?s=135'],
+						['СРО-П-128-27012010','http://membersite.sroreestr.ru/default.aspx?s=138'],
+						['СРО-П-135-15022010','http://membersite.sroreestr.ru/default.aspx?s=145'],
+						['СРО-П-141-27022010','http://membersite.sroreestr.ru/default.aspx?s=151'],
+						['СРО-П-153-30032010','http://membersite.sroreestr.ru/default.aspx?s=163'],
+						['СРО-П-154-15042010','http://membersite.sroreestr.ru/default.aspx?s=164'],
+						['СРО-П-157-23072010','http://membersite.sroreestr.ru/default.aspx?s=167'],
+						['СРО-П-185-16052013','http://membersite.sroreestr.ru/default.aspx?s=381'],
+						['СРО-С-083-27112009','http://membersite.sroreestr.ru/default.aspx?s=383'],
+						['СРО-С-120-17122009','http://membersite.sroreestr.ru/default.aspx?s=395'],
+						['СРО-С-162-28122009','http://www.monolitsro.ru/IFrames/Organizations.aspx'],
+						['СРО-С-174-14012010','http://membersite.sroreestr.ru/Organizations.aspx?s=394'],
+						['СРО-С-202-19022010','http://membersite.sroreestr.ru/default.aspx?s=382']
+					]
+		sources_list.each do |sro_code, start_page|
+			collect_type_5 sro_code, start_page
+		end
+	end
+
+	desc 'collect_type_5'
+	task :collect_type_5, :sro_code, :start_page do |t, args|
+		Dir.mkdir('csv') unless Dir.exist?('csv')
+		Dir.chdir('csv')
+		collect_type_5 args.sro_code, args.start_page
+	end
+
 	def collect_sfera_type sro_code, start_page
 		driver = Selenium::WebDriver.for :chrome
 		driver.navigate.to start_page
@@ -64,6 +109,17 @@ namespace :collecting do
 				exporter.save_to_csv(bot.collect_values(link))
 			end
 			driver.navigate.to next_page_link
+		end
+		driver.quit
+	end
+
+	def collect_type_5 sro_code, start_page
+		driver = Selenium::WebDriver.for :chrome
+		bot = Type5Crawler.new driver
+		exporter = Exporter.new(sro_code)
+		links = bot.collect_links start_page
+		links.each do |link|
+			exporter.save_to_csv(bot.collect_values(link))
 		end
 		driver.quit
 	end
